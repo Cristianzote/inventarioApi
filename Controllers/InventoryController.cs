@@ -48,9 +48,9 @@ namespace inventarioApi.Controllers
         
         [HttpGet("userInventories/{ID_INVENTORY}")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<UserInventory>>> GetUserInventories(int ID_INVENTORY)
+        public async Task<ActionResult<IEnumerable<UserInventory>>> GetUserInventories(int ID_USER)
         {
-            var inventories = await _inventoryService.GetUserInventories(ID_INVENTORY);
+            var inventories = await _inventoryService.GetUserInventories(ID_USER);
             return Ok(inventories);
         }
 

@@ -8,7 +8,7 @@ namespace inventarioApi.Data.Models
         public int ID_USER_INVENTORY { get; set; }
         [ForeignKey("User")]
         public int USER { get; set; }
-        [ForeignKey("Product")]
+        [ForeignKey("Inventory")]
         public int INVENTORY { get; set; }
         public DateTimeOffset DATE { get; set; }
         public UserInventoryType TYPE { get; set; }

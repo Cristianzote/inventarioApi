@@ -9,6 +9,8 @@ namespace inventarioApi.Data.Models
         public required string DESCRIPTION { get; set; }
         public required string IMAGE { get; set; }
         public DateTimeOffset DATE { get; set; }
+        [ForeignKey("Inventory")]
+        public int INVENTORY { get; set; }
 
         //PK
         //public ICollection<Presentation>? Presentations { get; set; }

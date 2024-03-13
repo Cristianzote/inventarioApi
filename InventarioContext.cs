@@ -17,11 +17,11 @@ public class InventarioContext: DbContext
     public DbSet<Inventory> Inventories { get; set; }
     public DbSet<UserInventory> UserInventories { get; set; }
     //public DbSet<UserInventoryType> UserInventoryTypes { get; set; }
-    //public DbSet<Transaction> Transactions { get; set; }
-    //public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<Product> Products { get; set; }
-    //public DbSet<Presentation> Presentations { get; set; }
-    //public DbSet<TransactionDetail> TransactionDetails { get; set; }
+    public DbSet<Presentation> Presentations { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
+    //public DbSet<TransactionType> TransactionTypes { get; set; }
+    public DbSet<TransactionDetail> TransactionDetails { get; set; }
 
     //ModelBuilder
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ public class InventarioContext: DbContext
 
 
         //UserInventory
-        List<UserInventory> UserInventoryInit = new List<UserInventory>();
+        List<UserInventory> userInventoryInit = new List<UserInventory>();
         modelBuilder.Entity<UserInventory>(userInventory =>
         {
             userInventory.ToTable("USER_INVENTORY");
@@ -75,11 +75,11 @@ public class InventarioContext: DbContext
             userInventory.Property(i => i.TYPE).IsRequired();
             userInventory.Property(i => i.DATE);
 
-            userInventory.HasData(UserInventoryInit);
+            userInventory.HasData(userInventoryInit);
         });
 
         //PRODUCT
-        List<Product> ProductInit = new List<Product>();
+        List<Product> productInit = new List<Product>();
         modelBuilder.Entity<Product>(product =>
         {
             product.ToTable("PRODUCT");
@@ -90,9 +90,63 @@ public class InventarioContext: DbContext
             product.Property(i => i.DESCRIPTION).IsRequired();
             product.Property(i => i.IMAGE).IsRequired();
             product.Property(i => i.DATE);
-            //product.Property(i => i.INVENTORY).IsRequired();
+            product.Property(i => i.INVENTORY).IsRequired();
 
-            product.HasData(ProductInit);
+            product.HasData(productInit);
+        });
+
+        //PRESENTATION
+        List<Presentation> presentationInit = new List<Presentation>();
+        modelBuilder.Entity<Presentation>(presentation =>
+        {
+            presentation.ToTable("PRESENTATION");
+            presentation.HasKey(i => i.ID_PRESENTATION);
+            presentation.HasIndex(i => i.ID_PRESENTATION).IsUnique();
+
+            presentation.Property(i => i.NAME).IsRequired();
+            presentation.Property(i => i.DESCRIPTION).IsRequired();
+            presentation.Property(i => i.QUANTITY).IsRequired();
+            presentation.Property(i => i.PRICE_INCOME).IsRequired();
+            presentation.Property(i => i.PRICE_OUTPUT).IsRequired();
+            presentation.Property(i => i.STOCK).IsRequired();
+            presentation.Property(i => i.RETAIL_STOCK).IsRequired();
+            presentation.Property(i => i.RETAIL_STOCK_RATIO).IsRequired();
+            presentation.Property(i => i.DATE);
+            presentation.Property(i => i.PRODUCT).IsRequired();
+
+            presentation.HasData(presentationInit);
+        });
+
+        //TRANSACTION
+        List<Transaction> transactionInit = new List<Transaction>();
+        modelBuilder.Entity<Transaction>(transaction =>
+        {
+            transaction.ToTable("TRANSACTION");
+            transaction.HasKey(i => i.ID_TRANSACTION);
+            transaction.HasIndex(i => i.ID_TRANSACTION).IsUnique();
+
+            transaction.Property(i => i.VALUE).IsRequired();
+            transaction.Property(i => i.INVENTORY).IsRequired();
+            transaction.Property(i => i.TYPE).IsRequired();
+            transaction.Property(i => i.DATE);
+
+            transaction.HasData(transactionInit);
+        });
+
+        //TRANSACTION_DETAILS
+        List<TransactionDetail> transactionDetailInit = new List<TransactionDetail>();
+        modelBuilder.Entity<TransactionDetail>(transactionDetail =>
+        {
+            transactionDetail.ToTable("TRANSACTION_DETAIL");
+            transactionDetail.HasKey(i => i.ID_TRANSACTION_DETAIL);
+            transactionDetail.HasIndex(i => i.ID_TRANSACTION_DETAIL).IsUnique();
+
+            transactionDetail.Property(i => i.QUANTITY).IsRequired();
+            transactionDetail.Property(i => i.PRESENTATION).IsRequired();
+            transactionDetail.Property(i => i.TRANSACTION).IsRequired();
+            //transactionDetail.Property(i => i.DATE);
+
+            transactionDetail.HasData(transactionDetailInit);
         });
     }
 }

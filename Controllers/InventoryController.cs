@@ -7,7 +7,7 @@ using inventarioApi.Data.DTO;
 namespace inventarioApi.Controllers
 {
     [ApiController]
-    [Route("/api/inventory")]
+    [Route("/api/v1/inventory")]
     public class InventoryController : ControllerBase
     {
         private readonly InventoryService _inventoryService;
@@ -46,7 +46,7 @@ namespace inventarioApi.Controllers
             return Ok(inventories);
         }
         
-        [HttpGet("userInventories/{ID_INVENTORY}")]
+        [HttpGet("userInventories/{ID_USER}")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UserInventory>>> GetUserInventories(int ID_USER)
         {

@@ -11,7 +11,7 @@ using inventarioApi.Data.Responses;
 namespace inventarioApi.Controllers
 {
     [ApiController]
-    [Route("/api/user")]
+    [Route("/api/v1/user")]
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;

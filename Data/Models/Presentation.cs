@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace inventarioApi.Data.Models
 {
@@ -16,5 +17,7 @@ namespace inventarioApi.Data.Models
         public DateTimeOffset DATE { get; set; }
         [ForeignKey("Product")]
         public int PRODUCT { get; set; }
+        [JsonIgnore]
+        public Product? Product { get; set; }
     }
 }

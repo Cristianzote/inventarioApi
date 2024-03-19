@@ -13,7 +13,7 @@ namespace inventarioApi.Data.Models
         public int INVENTORY { get; set; }
 
         //PK
-        //public ICollection<Presentation>? Presentations { get; set; }
+        public ICollection<Presentation> Presentations { get; set; }
         //FK
 
         //[ForeignKey("Inventory")]

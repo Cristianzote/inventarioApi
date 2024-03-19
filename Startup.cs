@@ -13,7 +13,7 @@ namespace inventarioApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<UserService>(); // Register the UserService
+            services.AddScoped<UserService>();
             services.AddScoped<InventoryService>();
             // Add other service registrations as needed
             services.AddControllers(); // Add MVC services

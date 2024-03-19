@@ -92,6 +92,10 @@ public class InventarioContext: DbContext
             product.Property(i => i.DATE);
             product.Property(i => i.INVENTORY).IsRequired();
 
+            product.HasMany(i => i.Presentations)
+                .WithOne(p => p.Product)
+                .HasForeignKey(p => p.PRODUCT);
+
             product.HasData(productInit);
         });
 

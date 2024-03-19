@@ -9,20 +9,22 @@ namespace inventarioApi.Data.Services
     public class InventoryService
     {
         private readonly InventarioContext _context;
-
-        //GET
         public InventoryService(InventarioContext context)
         {
             _context = context;
         }
+
+        //GET
         public async Task<List<Inventory>> GetInventoriesAsync()
         {
             return await _context.Inventories.ToListAsync();
         }
         public async Task<Inventory> GetInventoryById(int ID_INVENTORY)
         {
-            //return await _context.Inventory.FromSqlRaw("SELECT * FROM \"INVENTORY\" WHERE \"ID_INVENTORY\" = {0}", INVENTORY).FirstOrDefaultAsync();
-            var result = await _context.Inventories.FromSqlRaw("SELECT * FROM \"INVENTORY\" WHERE \"ID_INVENTORY\" = {0}", ID_INVENTORY).FirstOrDefaultAsync();
+            //var result = await _context.Inventories.FromSqlRaw("SELECT * FROM \"INVENTORY\" WHERE \"ID_INVENTORY\" = {0}", ID_INVENTORY).FirstOrDefaultAsync();
+            var result = await _context.Inventories
+            .Where(i => i.ID_INVENTORY == ID_INVENTORY)
+            .FirstOrDefaultAsync();
 
             if (result != null)
             {
@@ -35,7 +37,18 @@ namespace inventarioApi.Data.Services
         }
         public async Task<List<UserInventory>> GetUserInventories(int ID_USER)
         {
-            return await _context.UserInventories.FromSqlRaw("SELECT * FROM \"USER_INVENTORY\" WHERE \"USER\" = {0}", ID_USER).ToListAsync();
+            var result = await _context.UserInventories
+            .Where(i => i.USER == ID_USER)
+            .ToListAsync();
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Null value");
+            }
+            //return await _context.UserInventories.FromSqlRaw("SELECT * FROM \"USER_INVENTORY\" WHERE \"USER\" = {0}", ID_USER).ToListAsync();
         }
 
         //POST
@@ -45,7 +58,6 @@ namespace inventarioApi.Data.Services
             var inventoryEntity = new Inventory
             {
                 //ID_INVENTORY,
-                //DATE,
                 TITLE = INVENTORY.TITLE,
                 DESCRIPTION = INVENTORY.DESCRIPTION,
                 IMAGE = INVENTORY.IMAGE,

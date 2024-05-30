@@ -12,12 +12,11 @@ namespace inventarioApi.Data.Services
             _context = context;
         }
 
-        public async Task<List<Product>> GetProducts(int ID_INVENTORY)
+        public async Task<List<Product>> GetProducts()
         {
             var result = await _context.Products
             .Include(p => p.Presentations)
-            .Where(p => p.INVENTORY == ID_INVENTORY)
-            .Where(p => p.INVENTORY == ID_INVENTORY)
+            //.Where(p => p.INVENTORY == ID_INVENTORY)
             .ToListAsync();
 
             if (result != null)
@@ -29,12 +28,12 @@ namespace inventarioApi.Data.Services
                 throw new Exception("Null value");
             }
         }
-        public async Task<Product> GetProduct(int ID_INVENTORY, int ID_PRODUCT)
+        public async Task<Product> GetProduct(int ID_PRODUCT)
         {
             var result = await _context.Products
             .Include(p => p.Presentations)
-            .Where(p => p.INVENTORY == ID_INVENTORY)
-            .Where(p => p.ID_PRODUCT == ID_PRODUCT)
+            //.Where(p => p.INVENTORY == ID_INVENTORY)
+            .Where(p => p.IdProduct == ID_PRODUCT)
             .FirstAsync();
 
             if (result != null)
@@ -48,16 +47,17 @@ namespace inventarioApi.Data.Services
         }
 
         //POST
-        public async Task<Product> CreateProduct(Product PRODUCT, int ID_INVENTORY)
+        public async Task<Product> CreateProduct(Product PRODUCT)
         {
 
             var ProductEntity = new Product
             {
-                NAME = PRODUCT.NAME,
-                DESCRIPTION = PRODUCT.DESCRIPTION,
-                IMAGE = PRODUCT.IMAGE,
-                DATE = DateTimeOffset.UtcNow,
-                INVENTORY = ID_INVENTORY,
+                Name = PRODUCT.Name,
+                Description = PRODUCT.Description,
+                Image = PRODUCT.Image,
+                Category = PRODUCT.Category,
+                Date = DateTimeOffset.UtcNow,
+                //INVENTORY = ID_INVENTORY,
                 Presentations = PRODUCT.Presentations
             };
 
@@ -66,22 +66,23 @@ namespace inventarioApi.Data.Services
             try
             {
                 await _context.SaveChangesAsync();
-                int newProductId = ProductEntity.ID_PRODUCT;
+                int newProductId = ProductEntity.IdProduct;
 
                 //Create product presentations
                 foreach (Presentation presentations in ProductEntity.Presentations)
                 {
                     var PresentationEntity = new Presentation
                     {
-                        NAME = presentations.NAME,
-                        DESCRIPTION = presentations.DESCRIPTION,
-                        QUANTITY = presentations.QUANTITY,
-                        PRICE_INCOME = presentations.PRICE_INCOME,
-                        PRICE_OUTPUT = presentations.PRICE_OUTPUT,
-                        STOCK = presentations.STOCK,
-                        RETAIL_STOCK = presentations.RETAIL_STOCK,
-                        RETAIL_STOCK_RATIO = presentations.RETAIL_STOCK_RATIO,
-                        DATE = DateTimeOffset.UtcNow,
+                        Name = presentations.Name,
+                        Description = presentations.Description,
+                        Quantity = presentations.Quantity,
+                        PriceRetail = presentations.PriceRetail,
+                        PriceIncome = presentations.PriceIncome,
+                        PriceOutput = presentations.PriceOutput,
+                        Stock = presentations.Stock,
+                        RetailStock = presentations.RetailStock,
+                        RetailStockRatio = presentations.RetailStockRatio,
+                        Date = DateTimeOffset.UtcNow,
                         //PRODUCT = newProductId
                     };
 
@@ -96,6 +97,41 @@ namespace inventarioApi.Data.Services
             {
                 throw ex;
             }
+        }
+        public async Task<Product> UpdateProduct(Product PRODUCT)
+        {
+            var existingProduct = await _context.Products
+            .Include(p => p.Presentations)
+            .Where(p => p.IdProduct == PRODUCT.IdProduct)
+            .FirstAsync();
+
+            existingProduct.Image = PRODUCT.Image;
+            existingProduct.Name = PRODUCT.Name;
+            existingProduct.Description = PRODUCT.Description;
+            existingProduct.Category = PRODUCT.Category;
+            existingProduct.Date = PRODUCT.Date;
+
+            //Update product presentation
+            foreach (Presentation presentation in PRODUCT.Presentations)
+            {
+                try
+                {
+                    var presentationUpdated = await _context.Presentations
+                    .Where(p => p.IdPresentation == presentation.IdPresentation)
+                    .FirstAsync();
+
+                    presentationUpdated = presentation;
+                }
+                catch(Exception e)
+                {
+                    await _context.Presentations.AddAsync(presentation);
+                }
+            }
+
+            _context.Products.Update(existingProduct);
+            _context.SaveChanges();
+
+            return existingProduct;
         }
     }
 }

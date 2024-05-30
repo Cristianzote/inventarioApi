@@ -5,19 +5,20 @@ namespace inventarioApi.Data.Models
 {
     public class Presentation
     {
-        public int ID_PRESENTATION { get; set; }
-        public required string NAME { get; set; }
-        public required string DESCRIPTION { get; set; }
-        public int QUANTITY { get; set; }
-        public float PRICE_INCOME { get; set; }
-        public float PRICE_OUTPUT { get; set; }
-        public int STOCK { get; set; }
-        public int RETAIL_STOCK { get; set; }
-        public int RETAIL_STOCK_RATIO { get; set; }
-        public DateTimeOffset DATE { get; set; }
+        public int IdPresentation { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public int Quantity { get; set; }
+        public int PriceRetail { get; set; }
+        public float PriceIncome { get; set; }
+        public float PriceOutput { get; set; }
+        public int Stock { get; set; }
+        public int RetailStock { get; set; }
+        public int RetailStockRatio { get; set; }
+        public DateTimeOffset Date { get; set; }
         [ForeignKey("Product")]
-        public int PRODUCT { get; set; }
+        public int Product { get; set; }
         [JsonIgnore]
-        public Product? Product { get; set; }
+        public Product? Products { get; set; }
     }
 }

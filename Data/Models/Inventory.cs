@@ -5,11 +5,11 @@ namespace inventarioApi.Data.Models
 {
     public class Inventory
     {
-        public int ID_INVENTORY { get; set; }
-        public required string TITLE { get; set; }
-        public string? DESCRIPTION { get; set; }
-        public string? IMAGE { get; set; }
-        public DateTimeOffset DATE { get; set; }
+        public int IdInventory { get; set; }
+        public required string Title { get; set; }
+        public string? Description { get; set; }
+        public string? Image { get; set; }
+        public DateTimeOffset Date { get; set; }
 
         //PK
         //public ICollection<UserInventory>? UserInventories { get; set; }

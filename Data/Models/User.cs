@@ -5,11 +5,11 @@ namespace inventarioApi.Data.Models
 {
     public class User
     {
-        public int ID_USER { get; set; }
-        public required string NAME { get; set; }
-        public required string EMAIL { get; set; }
+        public int IdUser { get; set; }
+        public required string Name { get; set; }
+        public required string Email { get; set; }
         public Guid UUID { get; set; }
-        public DateTimeOffset DATE { get; set; }
+        public DateTimeOffset Date { get; set; }
 
         //PK
         //public ICollection<UserInventory>? UserInventories { get; set; }

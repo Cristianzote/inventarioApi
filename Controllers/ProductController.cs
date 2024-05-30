@@ -18,11 +18,11 @@ namespace inventarioApi.Controllers
         }
 
         //GET
-        [HttpGet("{ID_INVENTORY}")]
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<Inventory>> GetProducts(int ID_INVENTORY)
+        public async Task<ActionResult<Inventory>> GetProducts()
         {
-            var products = await _productService.GetProducts(ID_INVENTORY);
+            var products = await _productService.GetProducts();
 
             if (products == null)
             {
@@ -31,11 +31,11 @@ namespace inventarioApi.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{ID_INVENTORY}/{ID_PRODUCT}")]
+        [HttpGet("{ID_PRODUCT}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Inventory>> GetProduct(int ID_INVENTORY, int ID_PRODUCT)
+        public async Task<ActionResult<Inventory>> GetProduct(int ID_PRODUCT)
         {
-            var product = await _productService.GetProduct(ID_INVENTORY, ID_PRODUCT);
+            var product = await _productService.GetProduct(ID_PRODUCT);
 
             if (product == null)
             {
@@ -45,11 +45,24 @@ namespace inventarioApi.Controllers
         }
 
         //POST
-        [HttpPost("{ID_INVENTORY}")]
+        [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> CreateProduct([FromBody] Product PRODUCT, int ID_INVENTORY)
+        public async Task<ActionResult> CreateProduct([FromBody] Product PRODUCT)
         {
-            var product = await _productService.CreateProduct(PRODUCT, ID_INVENTORY);
+            var product = await _productService.CreateProduct(PRODUCT);
+            return Ok(product);
+        }
+        //UPDATE
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdateProduct([FromBody] Product PRODUCT)
+        {
+            var product = await _productService.UpdateProduct(PRODUCT);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
             return Ok(product);
         }
     }

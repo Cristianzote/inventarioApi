@@ -1,4 +1,4 @@
-﻿using inventarioApi.Data.Services;
+﻿/*using inventarioApi.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using inventarioApi.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -65,3 +65,4 @@ namespace inventarioApi.Controllers
     }
     
 }
+*/

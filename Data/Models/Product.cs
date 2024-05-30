@@ -4,13 +4,14 @@ namespace inventarioApi.Data.Models
 {
     public class Product
     {
-        public int ID_PRODUCT { get; set; }
-        public required string NAME { get; set; }
-        public required string DESCRIPTION { get; set; }
-        public required string IMAGE { get; set; }
-        public DateTimeOffset DATE { get; set; }
-        [ForeignKey("Inventory")]
-        public int INVENTORY { get; set; }
+        public int IdProduct { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public int Category { get; set; }
+        public required string Image { get; set; }
+        public DateTimeOffset Date { get; set; }
+        //[ForeignKey("Inventory")]
+        //public int INVENTORY { get; set; }
 
         //PK
         public ICollection<Presentation> Presentations { get; set; }
@@ -20,3 +21,4 @@ namespace inventarioApi.Data.Models
         //public Inventory? INVENTORY { get; set; }
     }
 }
+ 

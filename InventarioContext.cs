@@ -13,9 +13,6 @@ public class InventarioContext: DbContext
 
     }
     //Tables
-    public DbSet<User> Users { get; set; }
-    public DbSet<Inventory> Inventories { get; set; }
-    public DbSet<UserInventory> UserInventories { get; set; }
     //public DbSet<UserInventoryType> UserInventoryTypes { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Presentation> Presentations { get; set; }
@@ -28,73 +25,23 @@ public class InventarioContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        //User
-        List<User> usersInit = new List<User>();
-        //usersInit.Add(new User() { ID_USER = 123, NAME = "Cristian prueba 1", EMAIL = "cristiancitoowo@gmail.com", DATE = DateTime.Now, UUID = '550e8400-e29b-41d4-a716-446655440000' });
-        modelBuilder.Entity<User>(user =>
-        {
-            user.ToTable("USER");
-            user.HasKey(u => u.ID_USER);
-            user.HasIndex(u => u.ID_USER).IsUnique();
-
-            user.Property(u => u.NAME).IsRequired().HasMaxLength(150);
-            user.Property(u => u.EMAIL).IsRequired(false);
-            user.Property(u => u.DATE);
-
-            user.HasData(usersInit);
-        });
-
-
-        //Inventory
-        List<Inventory> inventoryInit = new List<Inventory>();
-        modelBuilder.Entity<Inventory>(inventory =>
-        {
-            inventory.ToTable("INVENTORY");
-            inventory.HasKey(i => i.ID_INVENTORY);
-            inventory.HasIndex(i => i.ID_INVENTORY).IsUnique();
-
-            inventory.Property(i => i.TITLE).IsRequired().HasMaxLength(150);
-            inventory.Property(i => i.DESCRIPTION).IsRequired().HasMaxLength(150);
-            inventory.Property(i => i.IMAGE).IsRequired(false);
-            inventory.Property(i => i.DATE);
-
-            inventory.HasData(inventoryInit);
-        });
-
-
-        //UserInventory
-        List<UserInventory> userInventoryInit = new List<UserInventory>();
-        modelBuilder.Entity<UserInventory>(userInventory =>
-        {
-            userInventory.ToTable("USER_INVENTORY");
-            userInventory.HasKey(i => i.ID_USER_INVENTORY);
-            userInventory.HasIndex(i => i.ID_USER_INVENTORY).IsUnique();
-
-            userInventory.Property(i => i.USER).IsRequired();
-            userInventory.Property(i => i.INVENTORY).IsRequired();
-            userInventory.Property(i => i.TYPE).IsRequired();
-            userInventory.Property(i => i.DATE);
-
-            userInventory.HasData(userInventoryInit);
-        });
-
         //PRODUCT
         List<Product> productInit = new List<Product>();
         modelBuilder.Entity<Product>(product =>
         {
             product.ToTable("PRODUCT");
-            product.HasKey(i => i.ID_PRODUCT);
-            product.HasIndex(i => i.ID_PRODUCT).IsUnique();
+            product.HasKey(i => i.IdProduct);
+            product.HasIndex(i => i.IdProduct).IsUnique();
 
-            product.Property(i => i.NAME).IsRequired();
-            product.Property(i => i.DESCRIPTION).IsRequired();
-            product.Property(i => i.IMAGE).IsRequired();
-            product.Property(i => i.DATE);
-            product.Property(i => i.INVENTORY).IsRequired();
+            product.Property(i => i.Name).IsRequired();
+            product.Property(i => i.Description).IsRequired();
+            product.Property(i => i.Category).IsRequired();
+            product.Property(i => i.Image).IsRequired();
+            product.Property(i => i.Date);
 
             product.HasMany(i => i.Presentations)
-                .WithOne(p => p.Product)
-                .HasForeignKey(p => p.PRODUCT);
+                .WithOne(p => p.Products)
+                .HasForeignKey(p => p.Product);
 
             product.HasData(productInit);
         });
@@ -104,19 +51,20 @@ public class InventarioContext: DbContext
         modelBuilder.Entity<Presentation>(presentation =>
         {
             presentation.ToTable("PRESENTATION");
-            presentation.HasKey(i => i.ID_PRESENTATION);
-            presentation.HasIndex(i => i.ID_PRESENTATION).IsUnique();
+            presentation.HasKey(i => i.IdPresentation);
+            presentation.HasIndex(i => i.IdPresentation).IsUnique();
 
-            presentation.Property(i => i.NAME).IsRequired();
-            presentation.Property(i => i.DESCRIPTION).IsRequired();
-            presentation.Property(i => i.QUANTITY).IsRequired();
-            presentation.Property(i => i.PRICE_INCOME).IsRequired();
-            presentation.Property(i => i.PRICE_OUTPUT).IsRequired();
-            presentation.Property(i => i.STOCK).IsRequired();
-            presentation.Property(i => i.RETAIL_STOCK).IsRequired();
-            presentation.Property(i => i.RETAIL_STOCK_RATIO).IsRequired();
-            presentation.Property(i => i.DATE);
-            presentation.Property(i => i.PRODUCT).IsRequired();
+            presentation.Property(i => i.Name).IsRequired();
+            presentation.Property(i => i.Description).IsRequired();
+            presentation.Property(i => i.Quantity).IsRequired();
+            presentation.Property(i => i.PriceIncome).IsRequired();
+            presentation.Property(i => i.PriceOutput).IsRequired();
+            presentation.Property(i => i.PriceRetail).IsRequired();
+            presentation.Property(i => i.Stock).IsRequired();
+            presentation.Property(i => i.RetailStock).IsRequired();
+            presentation.Property(i => i.RetailStockRatio).IsRequired();
+            presentation.Property(i => i.Date);
+            presentation.Property(i => i.Product).IsRequired();
 
             presentation.HasData(presentationInit);
         });
@@ -126,13 +74,16 @@ public class InventarioContext: DbContext
         modelBuilder.Entity<Transaction>(transaction =>
         {
             transaction.ToTable("TRANSACTION");
-            transaction.HasKey(i => i.ID_TRANSACTION);
-            transaction.HasIndex(i => i.ID_TRANSACTION).IsUnique();
+            transaction.HasKey(i => i.IdTransaction);
+            transaction.HasIndex(i => i.IdTransaction).IsUnique();
 
-            transaction.Property(i => i.VALUE).IsRequired();
-            transaction.Property(i => i.INVENTORY).IsRequired();
-            transaction.Property(i => i.TYPE).IsRequired();
-            transaction.Property(i => i.DATE);
+            transaction.Property(i => i.Value).IsRequired();
+            transaction.Property(i => i.Type).IsRequired();
+            transaction.Property(i => i.Date);
+
+            transaction.HasMany(i => i.TransactionDetail)
+                .WithOne(i => i.Transactions)
+                .HasForeignKey(i => i.Transaction);
 
             transaction.HasData(transactionInit);
         });
@@ -142,12 +93,14 @@ public class InventarioContext: DbContext
         modelBuilder.Entity<TransactionDetail>(transactionDetail =>
         {
             transactionDetail.ToTable("TRANSACTION_DETAIL");
-            transactionDetail.HasKey(i => i.ID_TRANSACTION_DETAIL);
-            transactionDetail.HasIndex(i => i.ID_TRANSACTION_DETAIL).IsUnique();
+            transactionDetail.HasKey(i => i.IdTransactionDetail);
+            transactionDetail.HasIndex(i => i.IdTransactionDetail).IsUnique();
 
-            transactionDetail.Property(i => i.QUANTITY).IsRequired();
-            transactionDetail.Property(i => i.PRESENTATION).IsRequired();
-            transactionDetail.Property(i => i.TRANSACTION).IsRequired();
+            transactionDetail.Property(i => i.Quantity).IsRequired();
+            transactionDetail.Property(i => i.Detail).IsRequired();
+            transactionDetail.Property(i => i.Presentation).IsRequired();
+            transactionDetail.Property(i => i.Transaction).IsRequired();
+
             //transactionDetail.Property(i => i.DATE);
 
             transactionDetail.HasData(transactionDetailInit);

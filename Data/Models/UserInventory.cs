@@ -5,12 +5,12 @@ namespace inventarioApi.Data.Models
 {
     public class UserInventory
     {
-        public int ID_USER_INVENTORY { get; set; }
+        public int IdUserInventory { get; set; }
         [ForeignKey("User")]
-        public int USER { get; set; }
+        public int User { get; set; }
         [ForeignKey("Inventory")]
-        public int INVENTORY { get; set; }
-        public DateTimeOffset DATE { get; set; }
-        public UserInventoryType TYPE { get; set; }
+        public int Inventory { get; set; }
+        public DateTimeOffset Date { get; set; }
+        public UserInventoryType Type { get; set; }
     }
 }

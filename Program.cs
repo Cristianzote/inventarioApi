@@ -19,9 +19,8 @@ builder.Services.AddDbContext<InventarioContext>(options => {
     options.UseNpgsql(connectionString);
 });
 
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<InventoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<TransactionService>();
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-﻿using inventarioApi.Data.Models;
+﻿/*using inventarioApi.Data.Models;
 using InventarioApi;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +19,12 @@ namespace inventarioApi.Data.Services
         }
         public async Task<User> GetUsersByIdAsync(int ID_USER)
         {
-            var result = await _context.Users.FromSqlRaw(sql: "SELECT * FROM \"USER\" WHERE \"ID_USER\" = {0}", ID_USER).FirstOrDefaultAsync();
+            //var result = await _context.Users.FromSqlRaw(sql: "SELECT * FROM \"USER\" WHERE \"ID_USER\" = {0}", ID_USER).FirstOrDefaultAsync();
+            var result = await _context.Users
+            .Where(u => u.ID_USER == ID_USER)
+            .FirstOrDefaultAsync();
 
-            if(result != null)
+            if (result != null)
             {
                 return result;
             }
@@ -32,7 +35,6 @@ namespace inventarioApi.Data.Services
         }
 
         //POST
-
         public async Task<User> CreateUser (User USER)
         {
             try
@@ -55,5 +57,25 @@ namespace inventarioApi.Data.Services
             }
 
         }
+
+        //PUT
+        public async Task<User> EditUser (User USER)
+        {
+            try
+            {
+                var existingUser = await _context.Users
+                    .Where(u => u.ID_USER == USER.ID_USER)
+                    .FirstOrDefaultAsync();
+
+                existingUser.NAME = USER.NAME;
+                existingUser.NAME = USER.NAME;
+                return existingUser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
+*/

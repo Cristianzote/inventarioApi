@@ -1,4 +1,4 @@
-﻿using inventarioApi.Data.Services;
+﻿/*using inventarioApi.Data.Services;
 using inventarioApi.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -60,5 +60,16 @@ namespace inventarioApi.Controllers
 
             return CreatedAtAction(nameof(Get), "Ejemplo", response);
         }
+
+        //PUT[HttpPost]
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<ActionResult> EditUser([FromBody] User USER)
+        {
+            var response = await _userService.CreateUser(USER);
+
+            return CreatedAtAction(nameof(Get), "Ejemplo", response);
+        }
     }
 }
+*/

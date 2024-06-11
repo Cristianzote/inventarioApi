@@ -31,44 +31,48 @@ namespace inventarioApi.Data.Services
         //POST
         public async Task<Transaction> CreateTransaction(Transaction TRANSACTION)
         {
-
+            // Create a new Transaction entity
             var TransactionEntity = new Transaction
             {
                 Value = TRANSACTION.Value,
                 Type = TRANSACTION.Type,
                 Date = DateTimeOffset.UtcNow,
-                TransactionDetail = TRANSACTION.TransactionDetail
+                // Initialize an empty list for TransactionDetail to avoid tracking issues
+                TransactionDetail = new List<TransactionDetail>()
             };
 
+            // Add the new Transaction entity to the context
             await _context.Transactions.AddAsync(TransactionEntity);
 
             try
             {
+                // Save changes to get the new Transaction ID
                 await _context.SaveChangesAsync();
                 int newTransactionId = TransactionEntity.IdTransaction;
 
-                //Create detail on presentation
-                foreach (TransactionDetail transactionDetails in TransactionEntity.TransactionDetail)
+                // Iterate over the details from the input transaction
+                foreach (var transactionDetail in TRANSACTION.TransactionDetail)
                 {
+                    // Create a new TransactionDetail entity for each detail
                     var TransactionDetailEntity = new TransactionDetail
                     {
-                        Detail = transactionDetails.Detail,
-                        Quantity = transactionDetails.Quantity,
-                        Presentation = transactionDetails.Presentation,
-                        Transaction = transactionDetails.Transaction
+                        Detail = transactionDetail.Detail,
+                        Quantity = transactionDetail.Quantity,
+                        Presentation = transactionDetail.Presentation,
+                        Transaction = newTransactionId
                     };
 
-                    //Presentation stock ajustment
-                    var presentationEntity = await _context.Presentations.FindAsync(transactionDetails.Presentation);
+                    // Adjust stock based on the transaction type
+                    var presentationEntity = await _context.Presentations.FindAsync(transactionDetail.Presentation);
                     switch (TransactionEntity.Type)
                     {
                         case TransactionType.INCOME:
                             presentationEntity.Stock += TransactionDetailEntity.Quantity;
-                        break;
-                        
+                            break;
+
                         case TransactionType.OUTPUT:
-                            //Detail sale?
-                            if (presentationEntity.RetailStockRatio! == 1)
+                            // Adjust stock based on retail stock ratio
+                            if (presentationEntity.RetailStockRatio == 1)
                             {
                                 presentationEntity.Stock -= TransactionDetailEntity.Quantity;
                             }
@@ -94,19 +98,25 @@ namespace inventarioApi.Data.Services
                                     presentationEntity.RetailStock -= TransactionDetailEntity.Quantity;
                                 }
                             }
-                        break;
+                            break;
                     }
-                    await _context.TransactionDetails.AddAsync(transactionDetails);
+
+                    // Add the new TransactionDetail entity to the context
+                    await _context.TransactionDetails.AddAsync(TransactionDetailEntity);
+                    // Also add it to the TransactionEntity's details list
+                    TransactionEntity.TransactionDetail.Add(TransactionDetailEntity);
                 }
 
-                //var createUserInventory = await _context.UserInventories.AddAsync(userInventoryEntity);
-                //await _context.SaveChangesAsync();
+                // Save all changes
+                await _context.SaveChangesAsync();
                 return TransactionEntity;
             }
             catch (Exception ex)
             {
-                throw ex;
+                // Log the exception as needed
+                throw new Exception("Error creating transaction", ex);
             }
         }
+
     }
 }

@@ -56,7 +56,7 @@ namespace inventarioApi.Data.Services
                 Description = PRODUCT.Description,
                 Image = PRODUCT.Image,
                 Category = PRODUCT.Category,
-                Date = DateTimeOffset.UtcNow,
+                Date = DateTimeOffset.UtcNow.AddHours(-5),
                 //INVENTORY = ID_INVENTORY,
                 Presentations = PRODUCT.Presentations
             };
@@ -82,7 +82,7 @@ namespace inventarioApi.Data.Services
                         Stock = presentations.Stock,
                         RetailStock = presentations.RetailStock,
                         RetailStockRatio = presentations.RetailStockRatio,
-                        Date = DateTimeOffset.UtcNow,
+                        Date = DateTimeOffset.UtcNow.AddHours(-5),
                         //PRODUCT = newProductId
                     };
 
@@ -112,7 +112,7 @@ namespace inventarioApi.Data.Services
             existingProduct.Date = PRODUCT.Date;
 
             //Update product presentation
-            foreach (Presentation presentation in PRODUCT.Presentations)
+            foreach (Presentation presentation in PRODUCT.Presentations)    
             {
                 try
                 {

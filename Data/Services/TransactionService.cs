@@ -36,12 +36,10 @@ namespace inventarioApi.Data.Services
             {
                 Value = TRANSACTION.Value,
                 Type = TRANSACTION.Type,
-                Date = DateTimeOffset.UtcNow,
-                // Initialize an empty list for TransactionDetail to avoid tracking issues
+                Date = DateTimeOffset.UtcNow.AddHours(-5),
                 TransactionDetail = new List<TransactionDetail>()
             };
 
-            // Add the new Transaction entity to the context
             await _context.Transactions.AddAsync(TransactionEntity);
 
             try
@@ -64,6 +62,10 @@ namespace inventarioApi.Data.Services
 
                     // Adjust stock based on the transaction type
                     var presentationEntity = await _context.Presentations.FindAsync(transactionDetail.Presentation);
+                    if (presentationEntity == null) 
+                    {
+                        throw new Exception("Null Presentation");
+                    }
                     switch (TransactionEntity.Type)
                     {
                         case TransactionType.INCOME:

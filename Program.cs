@@ -21,6 +21,7 @@ builder.Services.AddDbContext<InventarioContext>(options => {
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<StatsService>();
 
 var app = builder.Build();
 

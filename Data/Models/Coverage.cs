@@ -4,7 +4,7 @@
     {
         public string product { get; set; }
         public string presentation { get; set; }
-        public string days { get; set; }
-
+        public float days { get; set; }
+        public string color { get; set; }
     }
 }

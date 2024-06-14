@@ -55,12 +55,18 @@ namespace inventarioApi.Data.Services
             var endDate = DateTimeOffset.UtcNow.AddHours(-5); // Adjust for time zone
             var startDate = endDate.AddDays(-30);
 
-            // Retrieve transaction details within the last 31 days for transactions of type OUTPUT
-            var transactionDetails = await _context.TransactionDetails
-                .Where(td => td.Transactions.Date >= startDate && td.Transactions.Date <= endDate && td.Transactions.Type == TransactionType.OUTPUT)
+            // Retrieve transactions within the specified date range and of type OUTPUT
+            var transactions = await _context.Transactions
+                .Where(t => t.Date >= startDate && t.Date <= endDate && t.Type == TransactionType.OUTPUT)
+                .Include(t => t.TransactionDetail) // Include the transaction details
                 .ToListAsync();
 
-            // Group transaction details by presentation and calculate total quantities
+            // Extract transaction details from the filtered transactions
+            var transactionDetails = transactions
+                .SelectMany(t => t.TransactionDetail)
+                .ToList();
+
+            // Group transaction details by presentation ID and calculate total quantities
             var presentationOutflows = transactionDetails
                 .GroupBy(td => td.Presentation)
                 .Select(g => new
@@ -73,7 +79,7 @@ namespace inventarioApi.Data.Services
             // Get the list of presentation IDs
             var presentationIds = presentationOutflows.Select(po => po.PresentationId).ToList();
 
-            // Fetch the presentations with their current stock
+            // Fetch the presentations with their current stock and related product information
             var presentations = await _context.Presentations
                 .Where(p => presentationIds.Contains(p.IdPresentation))
                 .Include(p => p.Products)
@@ -86,12 +92,13 @@ namespace inventarioApi.Data.Services
                     var presentation = presentations.FirstOrDefault(p => p.IdPresentation == po.PresentationId);
                     if (presentation != null)
                     {
-                        var daysOfCoverage = po.TotalQuantity == 0 ? "N/A" : (presentation.Stock / (float)po.TotalQuantity).ToString("F2");
+                        var daysOfCoverage = po.TotalQuantity == 0 ? 0 : (presentation.Stock / po.TotalQuantity);
                         return new Coverage
                         {
                             product = presentation.Products?.Name ?? "Unknown",
                             presentation = presentation.Name,
-                            days = daysOfCoverage
+                            days = daysOfCoverage,
+                            color = AsignColor(daysOfCoverage)
                         };
                     }
                     return null;
@@ -107,14 +114,25 @@ namespace inventarioApi.Data.Services
         {
             var months = new[]
             {
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        };
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            };
 
             var day = date.Day.ToString("00");
             var month = months[date.Month - 1];
             return $"{day} de {month}";
         }
 
+        private string AsignColor(float days)
+        {
+            return days switch
+            {
+                < 1 => "red-700",
+                >= 1 and < 5 => "red-500",
+                >= 5 and < 9 => "yellow-500",
+                >= 9 and < 14 => "green-500",
+                _ => "green-800"
+            };
+        }
     }
 }

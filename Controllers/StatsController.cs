@@ -19,36 +19,18 @@ namespace inventarioApi.Controllers
 
         //GET
         [HttpGet("sales")]
-    public async Task<IActionResult> GetSalesAndInflowsStatistics()
-    {
-        var stats = await _statsService.GetSalesAndInflowsStatistics();
-        return Ok(stats);
-    }
-
-        /*[HttpGet("all")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Inventory>>> GetAllInventories()
+        public async Task<IActionResult> GetSalesAndInflowsStatistics()
         {
-            var inventories = await _inventoryService.GetInventoriesAsync();
-            return Ok(inventories);
-        }
-        
-        [HttpGet("userInventories/{ID_USER}")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<UserInventory>>> GetUserInventories(int ID_USER)
-        {
-            var inventories = await _inventoryService.GetUserInventories(ID_USER);
-            return Ok(inventories);
+            var stats = await _statsService.GetSalesAndInflowsStatistics();
+            return Ok(stats);
         }
 
-        //POST
-        [HttpPost("createInventory/{ID_USER}")]
-        [AllowAnonymous]
-        public async Task<ActionResult> CreateInventory([FromBody] Inventory INVENTORY, int ID_USER)
+        [HttpGet("coverage")]
+        public async Task<IActionResult> GetStockCoverage()
         {
-            var userInventories = await _inventoryService.CreateInventory(INVENTORY, ID_USER);
-            return Ok(userInventories);
-        }*/
+            var stats = await _statsService.GetStockCoverage();
+            return Ok(stats);
+        }
     }
     
 }

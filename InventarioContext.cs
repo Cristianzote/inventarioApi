@@ -56,10 +56,11 @@ public class InventarioContext: DbContext
 
             presentation.Property(i => i.Name).IsRequired();
             presentation.Property(i => i.Description).IsRequired();
-            presentation.Property(i => i.Quantity).IsRequired();
             presentation.Property(i => i.PriceIncome).IsRequired();
             presentation.Property(i => i.PriceOutput).IsRequired();
+            presentation.Property(i => i.PriceOutputCover).IsRequired();
             presentation.Property(i => i.PriceRetail).IsRequired();
+            presentation.Property(i => i.PriceRetailCover).IsRequired();
             presentation.Property(i => i.Stock).IsRequired();
             presentation.Property(i => i.RetailStock).IsRequired();
             presentation.Property(i => i.RetailStockRatio).IsRequired();
@@ -93,13 +94,13 @@ public class InventarioContext: DbContext
         modelBuilder.Entity<TransactionDetail>(transactionDetail =>
         {
             transactionDetail.ToTable("TRANSACTION_DETAIL");
-            transactionDetail.HasKey(i => i.IdTransactionDetail);
-            transactionDetail.HasIndex(i => i.IdTransactionDetail).IsUnique();
+            transactionDetail.HasKey(td => td.IdTransactionDetail);
+            transactionDetail.HasIndex(td => td.IdTransactionDetail).IsUnique();
 
-            transactionDetail.Property(i => i.Quantity).IsRequired();
-            transactionDetail.Property(i => i.Detail).IsRequired();
-            transactionDetail.Property(i => i.Presentation).IsRequired();
-            transactionDetail.Property(i => i.Transaction).IsRequired();
+            transactionDetail.Property(td => td.Quantity).IsRequired();
+            transactionDetail.Property(td => td.Detail).IsRequired();
+            transactionDetail.Property(td => td.Presentation).IsRequired();
+            transactionDetail.Property(td => td.Transaction).IsRequired();
 
             //transactionDetail.Property(i => i.DATE);
 

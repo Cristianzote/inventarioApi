@@ -75,10 +75,11 @@ namespace inventarioApi.Data.Services
                     {
                         Name = presentations.Name,
                         Description = presentations.Description,
-                        Quantity = presentations.Quantity,
                         PriceRetail = presentations.PriceRetail,
+                        PriceRetailCover = presentations.PriceRetailCover,
                         PriceIncome = presentations.PriceIncome,
                         PriceOutput = presentations.PriceOutput,
+                        PriceOutputCover = presentations.PriceOutputCover,
                         Stock = presentations.Stock,
                         RetailStock = presentations.RetailStock,
                         RetailStockRatio = presentations.RetailStockRatio,

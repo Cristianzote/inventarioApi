@@ -9,8 +9,7 @@ namespace inventarioApi.Data.Models
         public bool Detail { get; set; }
         [ForeignKey("Presentation")]
         public int Presentation { get; set; }
-        //public Presentation Presentations { get; set; }
-        //public Presentation? Presentations { get; set; }
+        public Presentation? Presentations { get; set; }
         [ForeignKey("Transaction")]
         public int Transaction { get; set; }
         [JsonIgnore]

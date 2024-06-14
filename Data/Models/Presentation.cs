@@ -8,10 +8,11 @@ namespace inventarioApi.Data.Models
         public int IdPresentation { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }
-        public int Quantity { get; set; }
         public int PriceRetail { get; set; }
+        public int PriceRetailCover { get; set; }
         public float PriceIncome { get; set; }
         public float PriceOutput { get; set; }
+        public float PriceOutputCover { get; set; }
         public int Stock { get; set; }
         public int RetailStock { get; set; }
         public int RetailStockRatio { get; set; }

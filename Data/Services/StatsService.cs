@@ -15,7 +15,7 @@ namespace inventarioApi.Data.Services
 
         public async Task<Sales> GetSalesAndInflowsStatistics()
         {
-            var endDate = DateTimeOffset.UtcNow.AddHours(-5); // Adjust for time zone
+            var endDate = DateTimeOffset.UtcNow.AddHours(-5);
             var startDate = endDate.AddDays(-39);
 
             var transactions = await _context.Transactions
@@ -49,6 +49,59 @@ namespace inventarioApi.Data.Services
                 outflow = salesValues
             };
         }
+
+        public async Task<List<Coverage>> GetStockCoverage()
+        {
+            var endDate = DateTimeOffset.UtcNow.AddHours(-5); // Adjust for time zone
+            var startDate = endDate.AddDays(-30);
+
+            // Retrieve transaction details within the last 31 days for transactions of type OUTPUT
+            var transactionDetails = await _context.TransactionDetails
+                .Where(td => td.Transactions.Date >= startDate && td.Transactions.Date <= endDate && td.Transactions.Type == TransactionType.OUTPUT)
+                .ToListAsync();
+
+            // Group transaction details by presentation and calculate total quantities
+            var presentationOutflows = transactionDetails
+                .GroupBy(td => td.Presentation)
+                .Select(g => new
+                {
+                    PresentationId = g.Key,
+                    TotalQuantity = g.Sum(td => td.Quantity)
+                })
+                .ToList();
+
+            // Get the list of presentation IDs
+            var presentationIds = presentationOutflows.Select(po => po.PresentationId).ToList();
+
+            // Fetch the presentations with their current stock
+            var presentations = await _context.Presentations
+                .Where(p => presentationIds.Contains(p.IdPresentation))
+                .Include(p => p.Products)
+                .ToListAsync();
+
+            // Calculate stock coverage for each presentation
+            var coverageList = presentationOutflows
+                .Select(po =>
+                {
+                    var presentation = presentations.FirstOrDefault(p => p.IdPresentation == po.PresentationId);
+                    if (presentation != null)
+                    {
+                        var daysOfCoverage = po.TotalQuantity == 0 ? "N/A" : (presentation.Stock / (float)po.TotalQuantity).ToString("F2");
+                        return new Coverage
+                        {
+                            product = presentation.Products?.Name ?? "Unknown",
+                            presentation = presentation.Name,
+                            days = daysOfCoverage
+                        };
+                    }
+                    return null;
+                })
+                .Where(c => c != null)
+                .ToList();
+
+            return coverageList;
+        }
+
 
         private string FormatDateInSpanish(DateTime date)
         {

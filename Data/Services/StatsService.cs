@@ -15,29 +15,28 @@ namespace inventarioApi.Data.Services
 
         public async Task<Sales> GetSalesAndInflowsStatistics()
         {
+            //Date ranges
             var endDate = DateTimeOffset.UtcNow.AddHours(-5);
             var startDate = endDate.AddDays(-39);
-
             var transactions = await _context.Transactions
                 .Where(t => t.Date >= startDate && t.Date <= endDate)
                 .ToListAsync();
-
             var dateRange = Enumerable.Range(0, 40)
                 .Select(offset => startDate.AddDays(offset).Date)
                 .ToList();
 
+            //Get the total value of sales and incomes
             var salesValues = dateRange
                 .Select(d => transactions
                     .Where(t => t.Date.Date == d && t.Type == TransactionType.OUTPUT)
                     .Sum(t => t.Value))
                 .ToArray();
-
             var inflowValues = dateRange
                 .Select(d => transactions
                     .Where(t => t.Date.Date == d && t.Type == TransactionType.INCOME)
                     .Sum(t => t.Value))
                 .ToArray();
-
+            //Set formated dates
             var dates = dateRange
             .Select(d => FormatDateInSpanish(d))
             .ToArray();
@@ -52,21 +51,22 @@ namespace inventarioApi.Data.Services
 
         public async Task<List<Coverage>> GetStockCoverage()
         {
-            var endDate = DateTimeOffset.UtcNow.AddHours(-5); // Adjust for time zone
+            //Date ranges
+            var endDate = DateTimeOffset.UtcNow.AddHours(-5);
             var startDate = endDate.AddDays(-30);
 
-            // Retrieve transactions within the specified date range and of type OUTPUT
+            //Get transactions
             var transactions = await _context.Transactions
                 .Where(t => t.Date >= startDate && t.Date <= endDate && t.Type == TransactionType.OUTPUT)
-                .Include(t => t.TransactionDetail) // Include the transaction details
+                .Include(t => t.TransactionDetail)
                 .ToListAsync();
 
-            // Extract transaction details from the filtered transactions
+            //Get transaction details from transactions
             var transactionDetails = transactions
                 .SelectMany(t => t.TransactionDetail)
                 .ToList();
 
-            // Group transaction details by presentation ID and calculate total quantities
+            //Get presentation sales
             var presentationOutflows = transactionDetails
                 .GroupBy(td => td.Presentation)
                 .Select(g => new
@@ -76,16 +76,14 @@ namespace inventarioApi.Data.Services
                 })
                 .ToList();
 
-            // Get the list of presentation IDs
             var presentationIds = presentationOutflows.Select(po => po.PresentationId).ToList();
 
-            // Fetch the presentations with their current stock and related product information
+            //Get the selected presentations
             var presentations = await _context.Presentations
                 .Where(p => presentationIds.Contains(p.IdPresentation))
                 .Include(p => p.Products)
                 .ToListAsync();
 
-            // Calculate stock coverage for each presentation
             var coverageList = presentationOutflows
                 .Select(po =>
                 {
@@ -93,9 +91,10 @@ namespace inventarioApi.Data.Services
                     if (presentation != null)
                     {
                         var daysOfCoverage = po.TotalQuantity == 0 ? 0 : (presentation.Stock / po.TotalQuantity);
+                        //Build each presentation coverage
                         return new Coverage
                         {
-                            product = presentation.Products?.Name ?? "Unknown",
+                            product = presentation.Products?.Name ?? "Desconocido",
                             presentation = presentation.Name,
                             days = daysOfCoverage,
                             color = AsignColor(daysOfCoverage)

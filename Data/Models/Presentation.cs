@@ -21,5 +21,17 @@ namespace inventarioApi.Data.Models
         public int Product { get; set; }
         [JsonIgnore]
         public Product? Products { get; set; }
+        public Presentation GetPresentation(int id, List<Product> products)
+        {
+            foreach (var product in products)
+            {
+                var presentation = product.Presentations.FirstOrDefault(p => p.IdPresentation == id);
+                if (presentation != null)
+                {
+                    return presentation;
+                }
+            }
+            return null;
+        }
     }
 }

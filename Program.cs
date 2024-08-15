@@ -2,6 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using InventarioApi;
 using inventarioApi.Data.Services;
+using QuestPDF.Infrastructure;
+using inventarioApi.Data.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,17 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//var connectionString = builder.Configuration.GetConnectionString("SupabaseConnection") ?? throw new ArgumentNullException("No tiene string de conexión");
-var connectionString = "Host=aws-0-us-east-1.pooler.supabase.com;port=5432;Database=postgres;Username=postgres.uurvbhvptwrwyipgnkoe;Password=SfjI1S8bGUDcKTNU";
-Console.WriteLine(builder.Configuration.GetConnectionString("SupabaseConnection"));
-
+var connectionString = builder.Configuration.GetConnectionString("SupabaseConnection");
 builder.Services.AddDbContext<InventarioContext>(options => {
     options.UseNpgsql(connectionString);
 });
-
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<RazorViewToStringRenderer>();
+builder.Services.AddTransient<IMessage, Message >();
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+builder.Services.AddScoped<Message>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<StatsService>();
+builder.Services.AddScoped<ExpenseService>();
+builder.Services.AddScoped <MonthlyRegisterService>();
 
 var app = builder.Build();
 
@@ -35,6 +40,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+QuestPDF.Settings.License = LicenseType.Community;
+
 
 //app.UseWelcomePage();
 

@@ -86,8 +86,16 @@ namespace inventarioApi.Data.Services
                         Date = DateTimeOffset.UtcNow.AddHours(-5),
                         //PRODUCT = newProductId
                     };
+                    if (PresentationEntity.PriceRetailCover <= 1)
+                    {
+                        PresentationEntity.PriceRetailCover = PresentationEntity.PriceRetail;
+                    }
+                    if (PresentationEntity.PriceOutputCover <= 1)
+                    {
+                        PresentationEntity.PriceOutputCover = PresentationEntity.PriceRetail;
+                    }
 
-                    await _context.Presentations.AddAsync(presentations);
+                    await _context.Presentations.AddAsync(PresentationEntity);
                 }
 
                 //var createUserInventory = await _context.UserInventories.AddAsync(userInventoryEntity);
@@ -99,6 +107,8 @@ namespace inventarioApi.Data.Services
                 throw ex;
             }
         }
+
+        //PUT
         public async Task<Product> UpdateProduct(Product PRODUCT)
         {
             var existingProduct = await _context.Products

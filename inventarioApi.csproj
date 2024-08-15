@@ -8,10 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\NewFolder\**" />
-    <Content Remove="Data\NewFolder\**" />
-    <EmbeddedResource Remove="Data\NewFolder\**" />
-    <None Remove="Data\NewFolder\**" />
+    <Content Remove="Views\Templates\EBill\EBill.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,13 +16,42 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-preview.1" />
+    <PackageReference Include="Quartz" Version="3.11.0" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.11.0" />
+    <PackageReference Include="QuestPDF" Version="2024.7.0" />
     <PackageReference Include="supabase-csharp" Version="0.15.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data\DAO\" />
+    <Folder Include="Views\img\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Views\img\appiconfg.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\img\AtlenalBill.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\img\BillBG.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Templates\EBill\EBill.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Templates\EBill\EBill.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Templates\EBill\EBill.cshtml" />
   </ItemGroup>
 
 </Project>

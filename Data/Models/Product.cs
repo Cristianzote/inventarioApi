@@ -19,6 +19,11 @@ namespace inventarioApi.Data.Models
 
         //[ForeignKey("Inventory")]
         //public Inventory? INVENTORY { get; set; }
+
+        public Product GetProduct(int id, List<Product> product)
+        {
+            return product.FirstOrDefault(p => id == p.IdProduct);
+        }
     }
 }
  

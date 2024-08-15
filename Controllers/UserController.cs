@@ -72,4 +72,11 @@ namespace inventarioApi.Controllers
         }
     }
 }
+-8577 9263
+4346 5721
+/tp 9592 ~ -776
+/tp 8120 ~ -8520
+/tp 10840 ~ -744
+/tp 17192 ~ 15624
+
 */

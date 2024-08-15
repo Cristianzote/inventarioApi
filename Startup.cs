@@ -1,4 +1,9 @@
 ﻿using inventarioApi.Data.Services;
+using Microsoft.Extensions.FileProviders;
+using Quartz;
+using Quartz.Spi;
+using Quartz.Impl;
+using inventarioApi.Data.Jobs;
 
 namespace inventarioApi
 {
@@ -13,8 +18,20 @@ namespace inventarioApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add other service registrations as needed
-            services.AddControllers(); // Add MVC services
+            services.AddControllers();
+
+            services.AddQuartz(q =>
+            {
+
+                var jobKey = new JobKey("RegisterMonthlyExpensesJob");
+
+                q.AddJob<InventoryExpenseJob>(opts => opts.WithIdentity(jobKey));
+
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity("RegisterMonthlyExpensesJob-trigger")
+                    .WithCronSchedule("0 45 23 15 * ?")); // s m h d * cada mes
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -29,6 +46,13 @@ namespace inventarioApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers(); // Map controllers
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Views")),
+                RequestPath = "/views"
             });
         }
     }

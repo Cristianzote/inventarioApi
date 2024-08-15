@@ -12,6 +12,7 @@ namespace inventarioApi.Data.Services
             _context = context;
         }
 
+        //GET
         public async Task<List<Transaction>> GetTransactions()
         {
             var result = await _context.Transactions
@@ -27,6 +28,43 @@ namespace inventarioApi.Data.Services
                 throw new Exception("Null value");
             }
         }
+        public async Task<Transaction> GetTransactionById(int id)
+        {
+            var result = await _context.Transactions
+            .Include(t => t.TransactionDetail)
+            .Where(t => t.IdTransaction == id)
+            .FirstOrDefaultAsync();
+
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Null value");
+            }
+        }
+
+        public async Task<Transaction> GetBill(int ID)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.TransactionDetail)
+                .Where(t => t.IdTransaction == ID)
+                .Select(t => new Transaction()
+                {
+                    Date = t.Date,
+                    IdTransaction = t.IdTransaction,
+                    Table = t.Table,
+                    Type = t.Type,
+                    Cover = t.Cover,
+                    Value = t.Value,
+                    TransactionDetail = t.TransactionDetail
+
+                })
+            .FirstOrDefaultAsync();
+
+            return transaction;
+        }
 
         //POST
         public async Task<Transaction> CreateTransaction(Transaction TRANSACTION)
@@ -36,6 +74,8 @@ namespace inventarioApi.Data.Services
             {
                 Value = TRANSACTION.Value,
                 Type = TRANSACTION.Type,
+                Table = TRANSACTION.Table,
+                Cover = TRANSACTION.Cover,
                 Date = DateTimeOffset.UtcNow.AddHours(-5),
                 TransactionDetail = new List<TransactionDetail>()
             };
@@ -62,6 +102,7 @@ namespace inventarioApi.Data.Services
 
                     // Adjust stock based on the transaction type
                     var presentationEntity = await _context.Presentations.FindAsync(transactionDetail.Presentation);
+
                     if (presentationEntity == null) 
                     {
                         throw new Exception("Null Presentation");
@@ -74,26 +115,29 @@ namespace inventarioApi.Data.Services
 
                         case TransactionType.OUTPUT:
                             // Adjust stock based on retail stock ratio
-                            if (presentationEntity.RetailStockRatio == 1)
+                            if (presentationEntity.RetailStockRatio <= 1)
                             {
                                 presentationEntity.Stock -= TransactionDetailEntity.Quantity;
                             }
                             else
                             {
-                                if (presentationEntity.RetailStock - TransactionDetailEntity.Quantity > 0)
+                                if (presentationEntity.RetailStock - TransactionDetailEntity.Quantity <= 0)
                                 {
-                                    float reducedStock = (TransactionDetailEntity.Quantity / presentationEntity.RetailStock);
-                                    presentationEntity.Stock -= (int)reducedStock;
+                                    //Adjust stock and retail stock
+                                    int Quantity = TransactionDetailEntity.Quantity;
+                                    int RetailStock = presentationEntity.RetailStock;
+                                    int ReducedRetailStock = RetailStock - Quantity;
+                                    int ReducedStock = 0;
 
-                                    int reducedRetailStock = (TransactionDetailEntity.Quantity % presentationEntity.RetailStock) * presentationEntity.RetailStockRatio;
-                                    if (reducedRetailStock < presentationEntity.RetailStock)
+                                    while (ReducedRetailStock <= 0)
                                     {
-                                        presentationEntity.RetailStock -= reducedRetailStock;
+                                        var localStock = presentationEntity.RetailStockRatio;
+                                        ReducedRetailStock += localStock;
+                                        ReducedStock += 1;
                                     }
-                                    else
-                                    {
-                                        presentationEntity.RetailStock -= (presentationEntity.RetailStockRatio - reducedRetailStock);
-                                    }
+
+                                    presentationEntity.RetailStock = ReducedRetailStock;
+                                    presentationEntity.Stock -= ReducedStock;
                                 }
                                 else
                                 {

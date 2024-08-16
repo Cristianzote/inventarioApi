@@ -21,7 +21,7 @@ public class InventarioContext: DbContext
     public DbSet<TransactionDetail> TransactionDetails { get; set; }
     public DbSet<Expense> Expences { get; set; }
     public DbSet<MonthlyRegister> MonthlyRegister { get; set; }
-    public DbSet<MonthlyExpence> MonthlyExpences { get; set; }
+    public DbSet<MonthlyExpense> MonthlyExpences { get; set; }
 
     //ModelBuilder
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -115,8 +115,8 @@ public class InventarioContext: DbContext
         modelBuilder.Entity<Expense>(expences =>
         {
             expences.ToTable("EXPENSE");
-            expences.HasKey(e => e.IdExpences);
-            expences.HasIndex(e => e.IdExpences).IsUnique();
+            expences.HasKey(e => e.IdExpense);
+            expences.HasIndex(e => e.IdExpense).IsUnique();
 
             expences.Property(e => e.Value).IsRequired();
             expences.Property(e => e.Name).IsRequired();
@@ -141,17 +141,18 @@ public class InventarioContext: DbContext
             monthlyRegister.Property(mr => mr.InitialInventory).IsRequired();
             monthlyRegister.Property(mr => mr.FinalInventory).IsRequired();
             monthlyRegister.Property(mr => mr.Purchases).IsRequired();
+            monthlyRegister.Property(mr => mr.Expenses).IsRequired();
 
             monthlyRegister.HasData(monthlyRegisterInit);
         });
 
         //MONTHLY_EXPENCES
-        List<MonthlyExpence> monthlyExpencesInit = new List<MonthlyExpence>();
-        modelBuilder.Entity<MonthlyExpence>(monthlyExpences =>
+        List<MonthlyExpense> monthlyExpencesInit = new List<MonthlyExpense>();
+        modelBuilder.Entity<MonthlyExpense>(monthlyExpences =>
         {
-            monthlyExpences.ToTable("MONTHLY_EXPENCES");
-            monthlyExpences.HasKey(me => me.IdMonthlyExpences);
-            monthlyExpences.HasIndex(me => me.IdMonthlyExpences).IsUnique();
+            monthlyExpences.ToTable("MONTHLY_EXPENSE");
+            monthlyExpences.HasKey(me => me.IdMonthlyExpenses);
+            monthlyExpences.HasIndex(me => me.IdMonthlyExpenses).IsUnique();
 
             monthlyExpences.Property(me => me.Expense).IsRequired();
             monthlyExpences.Property(me => me.MonthlyRegister).IsRequired();

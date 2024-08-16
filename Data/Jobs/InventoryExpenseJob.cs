@@ -26,8 +26,8 @@ namespace inventarioApi.Data.Jobs
             //Create register
             var monthlyRegisterEntity = new MonthlyRegister
             {
-                InitialDate = DateTime.Now.AddMonths(-1),
-                FinalDate = DateTime.Now,
+                InitialDate = DateTime.UtcNow.AddMonths(-1),
+                FinalDate = DateTime.UtcNow,
                 InitialInventory = 0,
                 FinalInventory = 0,
                 Purchases = 0,
@@ -36,9 +36,10 @@ namespace inventarioApi.Data.Jobs
 
             //Initial inventory
             var monthlyRegisters = await _monthlyRegisterService.GetMonthlyRegisters();
-            if (monthlyRegisters != null)
+            if (monthlyRegisters.Any())
             {
                 monthlyRegisterEntity.InitialInventory = monthlyRegisters.LastOrDefault().FinalInventory;
+                monthlyRegisterEntity.InitialDate = monthlyRegisters.LastOrDefault().FinalDate.AddDays(1);
             }
 
             //Final inventory
@@ -47,7 +48,7 @@ namespace inventarioApi.Data.Jobs
             {
                 foreach (var presentation in product.Presentations)
                 {
-                    monthlyRegisterEntity.FinalInventory += (((int)presentation.PriceIncome) * presentation.Stock);
+                    monthlyRegisterEntity.FinalInventory += (int)(presentation.PriceIncome * presentation.Stock);
                 }
             }
 
@@ -61,7 +62,7 @@ namespace inventarioApi.Data.Jobs
             {
                 if (t.Type == TransactionType.INCOME)
                 {
-                    monthlyRegisterEntity.Purchases += ((int)t.Value);
+                    monthlyRegisterEntity.Purchases += (int)t.Value;
                 }
             }
 
@@ -72,7 +73,7 @@ namespace inventarioApi.Data.Jobs
                 .ToList();
             foreach (var expense in expenses)
             {
-                monthlyRegisterEntity.Expenses += (expense.Value * ((int)expense.Multiplier));
+                monthlyRegisterEntity.Expenses += (int)(expense.Value * expense.Multiplier);
             }
 
             //Create register
@@ -81,9 +82,9 @@ namespace inventarioApi.Data.Jobs
             //Create register - expense relation
             foreach (var expense in expenses)
             {
-                await _monthlyRegisterService.CreateMonthlyExpence(new MonthlyExpence
+                await _monthlyRegisterService.CreateMonthlyExpence(new MonthlyExpense
                 {
-                    Expense = expense.IdExpences,
+                    Expense = expense.IdExpense,
                     MonthlyRegister = register.IdMonthlyRegister
                 });
 

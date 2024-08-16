@@ -2,7 +2,7 @@
 {
     public class Expense
     {
-        public int IdExpences { get; set; }
+        public int IdExpense { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public int Value { get; set; }

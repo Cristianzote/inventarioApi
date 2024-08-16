@@ -49,7 +49,7 @@ namespace inventarioApi.Data.Services
         public async Task<Expense> UpdateExpense(Expense EXPENCE)
         {
             var existingeExpense = await _context.Expences
-            .Where(e => e.IdExpences == EXPENCE.IdExpences)
+            .Where(e => e.IdExpense == EXPENCE.IdExpense)
             .FirstAsync();
 
             if (existingeExpense == null)

@@ -59,7 +59,7 @@ namespace inventarioApi.Controllers
         public async Task<ActionResult> UpdateExpense(int ID)
         {
             var expenses = await _expenseService.GetExpenses();
-            var expense = expenses.Where(e => e.IdExpences == ID).FirstOrDefault();
+            var expense = expenses.Where(e => e.IdExpense == ID).FirstOrDefault();
 
             if (expense == null)
             {

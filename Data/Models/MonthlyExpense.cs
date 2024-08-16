@@ -1,8 +1,8 @@
 ﻿namespace inventarioApi.Data.Models
 {
-    public class MonthlyExpence
+    public class MonthlyExpense
     {
-        public int IdMonthlyExpences { get; set; }
+        public int IdMonthlyExpenses { get; set; }
         public int Expense { get; set; }
         public int MonthlyRegister { get; set; }
     }

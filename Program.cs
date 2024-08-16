@@ -4,6 +4,8 @@ using InventarioApi;
 using inventarioApi.Data.Services;
 using QuestPDF.Infrastructure;
 using inventarioApi.Data.Models;
+using Quartz;
+using inventarioApi.Data.Jobs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -27,6 +29,18 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<StatsService>();
 builder.Services.AddScoped<ExpenseService>();
 builder.Services.AddScoped <MonthlyRegisterService>();
+
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("RegisterMonthlyExpensesJob");
+    q.AddJob<InventoryExpenseJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("RegisterMonthlyExpensesJob-trigger")
+        .WithCronSchedule("0 0 0 19 * ?")); // s m h dia mes
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 var app = builder.Build();
 

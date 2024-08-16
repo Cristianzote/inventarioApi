@@ -19,19 +19,6 @@ namespace inventarioApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            services.AddQuartz(q =>
-            {
-
-                var jobKey = new JobKey("RegisterMonthlyExpensesJob");
-
-                q.AddJob<InventoryExpenseJob>(opts => opts.WithIdentity(jobKey));
-
-                q.AddTrigger(opts => opts
-                    .ForJob(jobKey)
-                    .WithIdentity("RegisterMonthlyExpensesJob-trigger")
-                    .WithCronSchedule("0 45 23 15 * ?")); // s m h d * cada mes
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -26,7 +26,7 @@ namespace inventarioApi.Data.Services
             }
         }
 
-        public async Task<List<MonthlyExpence>> GetMonthlyExpences(int ID_MONTHLY_REGISTER)
+        public async Task<List<MonthlyExpense>> GetMonthlyExpences(int ID_MONTHLY_REGISTER)
         {
             var result = await _context.MonthlyExpences
                 .Where(me => me.MonthlyRegister == ID_MONTHLY_REGISTER)
@@ -59,9 +59,9 @@ namespace inventarioApi.Data.Services
             return MonthlyRegisterEntity;
         }
 
-        public async Task<MonthlyExpence> CreateMonthlyExpence(MonthlyExpence MONTHLY_EXPENCE)
+        public async Task<MonthlyExpense> CreateMonthlyExpence(MonthlyExpense MONTHLY_EXPENCE)
         {
-            var MonthlyExpenseEntity = new MonthlyExpence
+            var MonthlyExpenseEntity = new MonthlyExpense
             {
                 Expense = MONTHLY_EXPENCE.Expense,
                 MonthlyRegister = MONTHLY_EXPENCE.MonthlyRegister

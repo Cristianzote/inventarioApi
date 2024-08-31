@@ -18,6 +18,20 @@ namespace inventarioApi.Controllers
         }
 
         //GET
+        [HttpGet("{ID}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Expense>> GetExpense(int ID)
+        {
+            var expenses = await _expenseService.GetExpenses();
+            var expense = expenses.Where(e => e.IdExpense == ID).FirstOrDefault();
+
+            if (expense == null)
+            {
+                return NotFound();
+            }
+            return Ok(expense);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<Expense>> GetExpenses()

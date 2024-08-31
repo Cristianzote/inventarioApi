@@ -28,7 +28,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<StatsService>();
 builder.Services.AddScoped<ExpenseService>();
-builder.Services.AddScoped <MonthlyRegisterService>();
+builder.Services.AddScoped<MonthlyRegisterService>();
 
 builder.Services.AddQuartz(q =>
 {
@@ -38,7 +38,7 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(jobKey)
         .WithIdentity("RegisterMonthlyExpensesJob-trigger")
-        .WithCronSchedule("0 0 0 19 * ?")); // s m h dia mes
+        .WithCronSchedule("0 0 1 19 * ?")); // s m h dia mes || 0 * * ? * * || 0 0 0 19 * ?
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 

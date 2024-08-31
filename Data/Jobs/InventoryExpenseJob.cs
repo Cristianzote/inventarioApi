@@ -26,7 +26,7 @@ namespace inventarioApi.Data.Jobs
             //Create register
             var monthlyRegisterEntity = new MonthlyRegister
             {
-                InitialDate = DateTime.UtcNow.AddMonths(-1),
+                InitialDate = DateTime.UtcNow.AddMonths(-1).AddDays(1),
                 FinalDate = DateTime.UtcNow,
                 InitialInventory = 0,
                 FinalInventory = 0,
@@ -39,7 +39,8 @@ namespace inventarioApi.Data.Jobs
             if (monthlyRegisters.Any())
             {
                 monthlyRegisterEntity.InitialInventory = monthlyRegisters.LastOrDefault().FinalInventory;
-                monthlyRegisterEntity.InitialDate = monthlyRegisters.LastOrDefault().FinalDate.AddDays(1);
+                DateTime dateTime = monthlyRegisters.LastOrDefault().FinalDate.Date.ToUniversalTime();
+                monthlyRegisterEntity.InitialDate = dateTime.AddDays(1);
             }
 
             //Final inventory

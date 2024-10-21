@@ -80,17 +80,16 @@ namespace inventarioApi.Data.Services
                         PriceIncome = presentations.PriceIncome,
                         PriceOutput = presentations.PriceOutput,
                         PriceOutputCover = presentations.PriceOutputCover,
+                        HasRetail = presentations.HasRetail,
                         Stock = presentations.Stock,
-                        RetailStock = presentations.RetailStock,
-                        RetailStockRatio = presentations.RetailStockRatio,
                         Date = DateTimeOffset.UtcNow.AddHours(-5),
                         //PRODUCT = newProductId
                     };
-                    if (PresentationEntity.PriceRetailCover <= 1)
+                    if (PresentationEntity.PriceRetailCover <= 0)
                     {
                         PresentationEntity.PriceRetailCover = PresentationEntity.PriceRetail;
                     }
-                    if (PresentationEntity.PriceOutputCover <= 1)
+                    if (PresentationEntity.PriceOutputCover <= 0)
                     {
                         PresentationEntity.PriceOutputCover = PresentationEntity.PriceRetail;
                     }

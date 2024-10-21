@@ -13,9 +13,8 @@ namespace inventarioApi.Data.Models
         public float PriceIncome { get; set; }
         public float PriceOutput { get; set; }
         public float PriceOutputCover { get; set; }
+        public bool HasRetail { get; set; }
         public int Stock { get; set; }
-        public int RetailStock { get; set; }
-        public int RetailStockRatio { get; set; }
         public DateTimeOffset Date { get; set; }
         [ForeignKey("Product")]
         public int Product { get; set; }

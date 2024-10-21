@@ -64,9 +64,8 @@ public class InventarioContext: DbContext
             presentation.Property(pr => pr.PriceOutputCover).IsRequired();
             presentation.Property(pr => pr.PriceRetail).IsRequired();
             presentation.Property(pr => pr.PriceRetailCover).IsRequired();
+            presentation.Property(pr => pr.HasRetail).IsRequired();
             presentation.Property(pr => pr.Stock).IsRequired();
-            presentation.Property(pr => pr.RetailStock).IsRequired();
-            presentation.Property(pr => pr.RetailStockRatio).IsRequired();
             presentation.Property(pr => pr.Date);
             presentation.Property(pr => pr.Product).IsRequired();
 
@@ -104,6 +103,7 @@ public class InventarioContext: DbContext
 
             transactionDetail.Property(td => td.Quantity).IsRequired();
             transactionDetail.Property(td => td.Detail).IsRequired();
+            transactionDetail.Property(td => td.Discounting).IsRequired();
             transactionDetail.Property(td => td.Presentation).IsRequired();
             transactionDetail.Property(td => td.Transaction).IsRequired();
 

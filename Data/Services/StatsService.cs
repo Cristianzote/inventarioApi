@@ -65,6 +65,7 @@ namespace inventarioApi.Data.Services
             //Get transaction details from transactions
             var transactionDetails = transactions
                 .SelectMany(t => t.TransactionDetail)
+                .Where(t => t.Detail == false)
                 .ToList();
 
             //Get presentation sales

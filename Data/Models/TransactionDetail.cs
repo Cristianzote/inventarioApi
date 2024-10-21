@@ -7,6 +7,7 @@ namespace inventarioApi.Data.Models
         public int IdTransactionDetail { get; set; }
         public int Quantity { get; set; }
         public bool Detail { get; set; }
+        public int Discounting { get; set; }
         [ForeignKey("Presentation")]
         public int Presentation { get; set; }
         [ForeignKey("Transaction")]

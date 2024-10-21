@@ -97,7 +97,8 @@ namespace inventarioApi.Data.Services
                         Detail = transactionDetail.Detail,
                         Quantity = transactionDetail.Quantity,
                         Presentation = transactionDetail.Presentation,
-                        Transaction = newTransactionId
+                        Transaction = newTransactionId,
+                        Discounting = transactionDetail.Discounting,
                     };
 
                     // Adjust stock based on the transaction type
@@ -114,8 +115,15 @@ namespace inventarioApi.Data.Services
                             break;
 
                         case TransactionType.OUTPUT:
-                            // Adjust stock based on retail stock ratio
-                            if (presentationEntity.RetailStockRatio <= 1)
+                            if(TransactionDetailEntity.Detail == false)
+                            {
+                                presentationEntity.Stock -= TransactionDetailEntity.Quantity;
+                            }
+                            else if(presentationEntity.HasRetail)
+                            {
+                                presentationEntity.Stock -= TransactionDetailEntity.Discounting;
+                            }
+                            /*if (presentationEntity.RetailStockRatio <= 1)
                             {
                                 presentationEntity.Stock -= TransactionDetailEntity.Quantity;
                             }
@@ -143,7 +151,7 @@ namespace inventarioApi.Data.Services
                                 {
                                     presentationEntity.RetailStock -= TransactionDetailEntity.Quantity;
                                 }
-                            }
+                            }*/
                             break;
                     }
 
